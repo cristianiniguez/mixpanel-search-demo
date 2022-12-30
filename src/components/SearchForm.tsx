@@ -1,6 +1,7 @@
-import { Field, Form, Formik, FormikConfig } from 'formik';
 import { FC } from 'react';
-import { searchImages } from '../services';
+import { Field, Form, Formik, FormikConfig } from 'formik';
+import { searchImages } from '../services/api';
+import mixpanel from '../services/mixpanel';
 
 type SearchFormValues = {
   q: string;
@@ -17,6 +18,7 @@ const SearchForm: FC<SearchFormProps> = ({ setImages }) => {
   ) => {
     try {
       const images = await searchImages(values.q);
+      mixpanel.track('image-search', { terms: values.q.split(' ') });
       setImages(images);
     } catch (error) {
       console.error(error);
